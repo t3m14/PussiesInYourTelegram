@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+  redis:
+    image: redis
+    restart: always
+  webapp:
+    restart: always
+    build: 
+      context: ./
+    ports:
+       - "8000:8000"
+    command: ["python3", "src/piyt/manage.py", "runserver", "0.0.0.0:8000"]
+
+  worker:
+    restart: always
+    build: 
+      context: ./
+    volumes:
+      - ./cats:/app/src/piyt/cats
+    command: ["celery", "--workdir=src/piyt", '-A', "piyt", "worker"]
